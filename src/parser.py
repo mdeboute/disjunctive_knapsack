@@ -1,7 +1,8 @@
 from structures import *
 
+
 def parser(filePath):
-    # Ewemple of .dat file:
+    # Exemple of .dat file:
     # param n := 500;
     # param c := 1000;
     # param : V : p w :=

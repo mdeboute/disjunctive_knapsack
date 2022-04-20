@@ -46,7 +46,3 @@ class Graph:
 
     def get_vertices_info(self):
         return self.vertices_info
-
-
-
-

@@ -3,21 +3,18 @@ from mip import *
 import sys, time
 
 
-if len(sys.argv) < 3 or len(sys.argv) > 3:
+if len(sys.argv) != 2:
     print("Bad number of arguments!")
-    print("Usage: python3 model.py <input_file> <output_dir>")
+    print("Usage: python3 model.py <input_file>")
     sys.exit()
 
 data_file = sys.argv[1]
-output_dir = sys.argv[2]
-
 graph, c = parser(data_file)
-
 n = graph.get_n()
 vertex = graph.get_vertices_info()
 
 model = Model(name='disjunctive_knapsack', solver_name="CBC")
-model.verbose = 0
+# model.verbose = 0
 
 x = [model.add_var(name="x_%s" % i, var_type=BINARY) for i in range(n)]
 
@@ -38,27 +35,21 @@ runtime = time.perf_counter() - start
 if data_file.__contains__("/"):
     data_file = data_file.split("/")[-1]
 
-data_file = data_file.removesuffix(".dat")
-sol_file = output_dir + data_file + ".sol"
+if status == OptimizationStatus.OPTIMAL:
+    print("Resolution status: OPTIMAL")
+elif status == OptimizationStatus.FEASIBLE:
+    print("Resolution status: TIMED OUT and CALCULATED FEASIBLE SOLUTION")
+elif status == OptimizationStatus.NO_SOLUTION_FOUND:
+    print("Resolution status: TIMED OUT and NO SOLUTION FOUND")
+elif status == OptimizationStatus.INFEASIBLE or status == OptimizationStatus.INT_INFEASIBLE:
+    print("Resolution status: INFEASIBLE")
+elif status == OptimizationStatus.UNBOUNDED:
+    print("Resolution status: UNBOUNDED")
 
-with open(sol_file, 'w') as file:
-    if status == OptimizationStatus.OPTIMAL:
-        file.write("Resolution status: OPTIMAL")
-    elif status == OptimizationStatus.FEASIBLE:
-        file.write("Resolution status: TIMED OUT and CALCULATED FEASIBLE SOLUTION")
-    elif status == OptimizationStatus.NO_SOLUTION_FOUND:
-        file.write("Resolution status: TIMED OUT and NO SOLUTION FOUND")
-    elif status == OptimizationStatus.INFEASIBLE or status == OptimizationStatus.INT_INFEASIBLE:
-        file.write("Resolution status: INFEASIBLE")
-    elif status == OptimizationStatus.UNBOUNDED:
-        file.write("Resolution status: UNBOUNDED")
+print("\nResolution time (sec) : " + str(round(runtime, 3))+"\n")
+print("----------------------------------\n")
 
-    file.write("\nResolution time (sec) : " + str(round(runtime, 3))+"\n")
-    file.write("----------------------------------\n")
-
-    if model.num_solutions > 0:
-        file.write("Result; " + data_file + "; " + str(round(runtime, 3)) + "; " + str(status) + "; " + str(model.objective_value) +"\n")
-    else:
-        file.write("Result; " + data_file + "; " + str(round(runtime, 3)) + "; " + str(status) + "; No solution returned!\n")
-
-    file.close()
+if model.num_solutions > 0:
+    print("Result; " + data_file + "; " + str(round(runtime, 3)) + "; " + str(status) + "; " + str(model.objective_value) +"\n")
+else:
+    print("Result; " + data_file + "; " + str(round(runtime, 3)) + "; " + str(status) + "; No solution returned!\n")

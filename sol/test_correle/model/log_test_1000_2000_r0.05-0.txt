@@ -1,0 +1,73 @@
+Welcome to the CBC MILP Solver 
+Version: Trunk
+Build Date: Nov 15 2020 
+
+Starting solution of the Linear programming relaxation problem using Primal Simplex
+
+Coin0506I Presolve 24976 (0) rows, 1000 (0) columns and 50950 (0) elements
+Clp0030I 23 infeas 2.5683263, obj 3355.4903 - mu 0.003011348, its 105, 316 interior
+Clp0030I 46 infeas 0.00036127087, obj 3351.913 - mu 1.3759674e-06, its 105, 482 interior
+Clp1000I sum of infeasibilities 4.42637e-05 - average 1.77225e-09, 558 fixed columns
+Coin0506I Presolve 4825 (-20151) rows, 442 (-558) columns and 10090 (-40860) elements
+Clp0006I 0  Obj 3351.9112 Primal inf 1.1364957e-06 (5) Dual inf 4.3350577e+08 (442)
+Clp0029I End of values pass after 442 iterations
+Clp0014I Perturbing problem by 0.001% of 1.6789795 - largest nonzero change 2.9978511e-05 ( 0.0020534688%) - largest zero change 0
+Clp0000I Optimal - objective value 3352.8333
+Clp0000I Optimal - objective value 3352.8333
+Coin0511I After Postsolve, objective 3352.8333, infeasibilities - dual 0 (0), primal 0 (0)
+Clp0006I 0  Obj 3352.8333
+Clp0000I Optimal - objective value 3352.8333
+Clp0000I Optimal - objective value 3352.8333
+Clp0000I Optimal - objective value 3352.8333
+Clp0032I Optimal objective 3352.833333 - 0 iterations time 1.532, Idiot 1.51
+
+Starting MIP optimization
+Resolution status: TIMED OUT and CALCULATED FEASIBLE SOLUTION
+
+Resolution time (sec) : 31.97
+
+----------------------------------
+
+Result; test_1000_2000_r0.05-0.dat; 31.97; OptimizationStatus.FEASIBLE; 2797.0
+
+Cgl0003I 0 fixed, 0 tightened bounds, 15789 strengthened rows, 0 substitutions
+Cgl0003I 0 fixed, 0 tightened bounds, 7267 strengthened rows, 0 substitutions
+Cgl0003I 0 fixed, 0 tightened bounds, 1081 strengthened rows, 0 substitutions
+Cgl0003I 0 fixed, 0 tightened bounds, 278 strengthened rows, 0 substitutions
+Cgl0003I 0 fixed, 0 tightened bounds, 66 strengthened rows, 0 substitutions
+Cgl0004I processed model has 17146 rows, 1000 columns (1000 integer (1000 of which binary)) and 50956 elements
+Coin3009W Conflict graph built in 0.008 seconds, density: 1.298%
+Cgl0015I Clique Strengthening extended 0 cliques, 0 were dominated
+Cbc0038I Initial state - 352 integers unsatisfied sum - 115.626
+Cbc0038I Solution found of -1014
+Cbc0038I Before mini branch and bound, 648 integers at bound fixed and 0 continuous
+Cbc0038I Full problem 17146 rows 1000 columns, reduced to 3186 rows 352 columns
+Cbc0038I Mini branch and bound improved solution from -1014 to -2127 (10.07 seconds)
+Cbc0038I Round again with cutoff of -2233.27
+Cbc0038I Pass   1: (11.58 seconds) suminf.    1.03462 (3) obj. -2233.27 iterations 2078
+Cbc0038I Solution found of -2265
+Cbc0038I Rounding solution of -2700 is better than previous of -2265
+
+Cbc0038I Before mini branch and bound, 635 integers at bound fixed and 0 continuous
+Cbc0038I Full problem 17146 rows 1000 columns, reduced to 3401 rows 365 columns
+Cbc0038I Mini branch and bound did not improve solution (18.02 seconds)
+Cbc0038I Round again with cutoff of -2796.94
+Cbc0038I Pass   2: (18.19 seconds) suminf.    0.35432 (3) obj. -2796.94 iterations 886
+Cbc0038I Pass   3: (18.22 seconds) suminf.    0.17895 (1) obj. -2798.21 iterations 569
+Cbc0038I Pass   4: (18.23 seconds) suminf.    0.19102 (1) obj. -2796.94 iterations 18
+Cbc0038I Pass   5: (18.33 seconds) suminf.   48.02203 (186) obj. -2796.94 iterations 456
+Cbc0038I Pass   6: (24.11 seconds) suminf.    1.25094 (3) obj. -2796.94 iterations 10941
+Cbc0038I Pass   7: (24.14 seconds) suminf.    0.56781 (2) obj. -2796.94 iterations 380
+Cbc0038I Pass   8: (24.15 seconds) suminf.    0.32327 (1) obj. -2796.94 iterations 154
+Cbc0038I Pass   9: (24.16 seconds) suminf.    0.38947 (1) obj. -2803.89 iterations 25
+Cbc0038I Pass  10: (24.27 seconds) suminf.   57.25437 (164) obj. -2796.94 iterations 548
+Cbc0038I Pass  11: (28.85 seconds) suminf.    0.69433 (2) obj. -2796.94 iterations 9319
+Cbc0038I Rounding solution of -2797 is better than previous of -2700
+
+Cbc0038I After 28.85 seconds - Feasibility pump exiting with objective of -2797 - took 24.31 seconds
+Cbc0012I Integer solution of -2797 found by feasibility pump after 0 iterations and 0 nodes (28.86 seconds)
+Cbc0020I Exiting on maximum time
+Cbc0005I Partial search - best objective -2797 (best possible -3180.717), took 0 iterations and 0 nodes (30.03 seconds)
+Cbc0035I Maximum depth 0, 0 variables fixed on reduced cost
+Total time (CPU seconds):       28.85   (Wallclock seconds):       30.24
+

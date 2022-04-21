@@ -1,4 +1,4 @@
-from parser import parser
+from utils import parser
 from mip import *
 import sys, time
 

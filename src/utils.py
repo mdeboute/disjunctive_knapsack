@@ -1,5 +1,10 @@
 from structures import *
 
+# because Python 3.7 doesn't have the remove_suffix method for strings
+def remove_suffix(input_string, suffix):
+    if suffix and input_string.endswith(suffix):
+        return input_string[:-len(suffix)]
+    return input_string
 
 def parser(filePath):
     # Exemple of .dat file:
@@ -24,8 +29,8 @@ def parser(filePath):
     with open(filePath, "r") as f:
         lines = f.readlines()
 
-    n = int(lines[0].split(" ")[3].removesuffix(";\n"))
-    c = int(lines[1].split(" ")[3].removesuffix(";\n"))
+    n = int(remove_suffix(lines[0].split(" ")[3], ";\n"))
+    c = int(remove_suffix(lines[1].split(" ")[3], ";\n"))
 
     vertices_info = list()
     for line in lines[3:n+3]:
@@ -42,5 +47,6 @@ def parser(filePath):
         # split by space and remove empty strings
         line = [x for x in line.split(" ") if x != ""]
         adjacency_matrix[int(line[0])][int(line[1])] = 1
+        adjacency_matrix[int(line[1])][int(line[0])] = 1
 
     return Graph(n, adjacency_matrix, vertices_info), c

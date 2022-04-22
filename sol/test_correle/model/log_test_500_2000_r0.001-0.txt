@@ -1,17 +1,17 @@
 Welcome to the CBC MILP Solver 
-Version: Trunk
+Version: devel 
 Build Date: Nov 15 2020 
 
 Starting solution of the Linear programming relaxation problem using Primal Simplex
 
-Coin0506I Presolve 125 (0) rows, 295 (-205) columns and 543 (-205) elements
-Clp1000I sum of infeasibilities 5.47641e-07 - average 4.38112e-09, 257 fixed columns
-Coin0506I Presolve 0 (-125) rows, 0 (-295) columns and 0 (-543) elements
-Clp0000I Optimal - objective value 1564
-Clp0000I Optimal - objective value 1564
-Coin0511I After Postsolve, objective 1564, infeasibilities - dual 222 (10), primal 0 (0)
-Coin0512I Presolved model was optimal, full model needs cleaning up
-Clp0014I Perturbing problem by 0.001% of 7.1106484 - largest nonzero change 3.5155876e-05 ( 0.0013846093%) - largest zero change 1.2489458e-05
+Coin0506I Presolve 125 (-124) rows, 295 (-205) columns and 543 (-453) elements
+Clp1000I sum of infeasibilities 5.73029e-07 - average 4.58423e-09, 224 fixed columns
+Coin0506I Presolve 25 (-100) rows, 63 (-232) columns and 111 (-432) elements
+Clp0029I End of values pass after 63 iterations
+Clp0000I Optimal - objective value 2641
+Clp0000I Optimal - objective value 2641
+Coin0511I After Postsolve, objective 2641, infeasibilities - dual 0 (0), primal 0 (0)
+Clp0014I Perturbing problem by 0.001% of 7.1106484 - largest nonzero change 4.4393331e-05 ( 0.0013341059%) - largest zero change 2.6625829e-05
 Clp0000I Optimal - objective value 3326.8966
 Clp0000I Optimal - objective value 3326.8966
 Clp0000I Optimal - objective value 3326.8966
@@ -21,11 +21,11 @@ Clp0032I Optimal objective 3326.896552 - 0 iterations time 0.012, Presolve 0.00,
 Starting MIP optimization
 Resolution status: OPTIMAL
 
-Resolution time (sec) : 0.128
+Resolution time (sec) : 0.09
 
 ----------------------------------
 
-Result; test_500_2000_r0.001-0.dat; 0.128; OptimizationStatus.OPTIMAL; 3320.0
+Result; test_500_2000_r0.001-0.dat; 0.09; OptimizationStatus.OPTIMAL; 3320.0
 
 Cgl0004I processed model has 125 rows, 295 columns (295 integer (214 of which binary)) and 543 elements
 Coin3009W Conflict graph built in 0.000 seconds, density: 0.194%
@@ -45,21 +45,21 @@ Cbc0038I Full problem 126 rows 295 columns, reduced to 2 rows 24 columns
 Cbc0038I Mini branch and bound could not fix general integers
 Cbc0038I No solution found this major pass
 Cbc0038I Before mini branch and bound, 294 integers at bound fixed and 0 continuous
-Cbc0038I Mini branch and bound did not improve solution (0.06 seconds)
-Cbc0038I After 0.06 seconds - Feasibility pump exiting with objective of -3320 - took 0.05 seconds
-Cbc0012I Integer solution of -3320 found by feasibility pump after 0 iterations and 0 nodes (0.06 seconds)
+Cbc0038I Mini branch and bound did not improve solution (0.07 seconds)
+Cbc0038I After 0.07 seconds - Feasibility pump exiting with objective of -3320 - took 0.05 seconds
+Cbc0012I Integer solution of -3320 found by feasibility pump after 0 iterations and 0 nodes (0.07 seconds)
 Cbc0038I Full problem 125 rows 295 columns, reduced to 1 rows 2 columns
-Cbc0031I 2 added rows had average density of 107
-Cbc0013I At root node, 2 cuts changed objective from -3326.8966 to -3320 in 1 passes
-Cbc0014I Cut generator 0 (Probing) - 0 row cuts average 0.0 elements, 19 column cuts (19 active)  in 0.000 seconds - new frequency is 1
+Cbc0031I 1 added rows had average density of 114
+Cbc0013I At root node, 1 cuts changed objective from -3326.8966 to -3320 in 1 passes
+Cbc0014I Cut generator 0 (Probing) - 0 row cuts average 0.0 elements, 12 column cuts (12 active)  in 0.000 seconds - new frequency is 1
 Cbc0014I Cut generator 1 (Gomory) - 0 row cuts average 0.0 elements, 0 column cuts (0 active)  in 0.000 seconds - new frequency is -100
 Cbc0014I Cut generator 2 (Knapsack) - 0 row cuts average 0.0 elements, 0 column cuts (0 active)  in 0.000 seconds - new frequency is -100
 Cbc0014I Cut generator 3 (Clique) - 0 row cuts average 0.0 elements, 0 column cuts (0 active)  in 0.000 seconds - new frequency is -100
 Cbc0014I Cut generator 4 (OddWheel) - 0 row cuts average 0.0 elements, 0 column cuts (0 active)  in 0.000 seconds - new frequency is -100
 Cbc0014I Cut generator 5 (MixedIntegerRounding2) - 0 row cuts average 0.0 elements, 0 column cuts (0 active)  in 0.000 seconds - new frequency is -100
 Cbc0014I Cut generator 6 (FlowCover) - 0 row cuts average 0.0 elements, 0 column cuts (0 active)  in 0.000 seconds - new frequency is -100
-Cbc0014I Cut generator 7 (TwoMirCuts) - 2 row cuts average 107.0 elements, 0 column cuts (0 active)  in 0.000 seconds - new frequency is -100
-Cbc0001I Search completed - best objective -3320, took 0 iterations and 0 nodes (0.07 seconds)
-Cbc0035I Maximum depth 0, 120 variables fixed on reduced cost
-Total time (CPU seconds):       0.07   (Wallclock seconds):       0.11
+Cbc0014I Cut generator 7 (TwoMirCuts) - 1 row cuts average 114.0 elements, 0 column cuts (0 active)  in 0.000 seconds - new frequency is -100
+Cbc0001I Search completed - best objective -3320, took 0 iterations and 0 nodes (0.08 seconds)
+Cbc0035I Maximum depth 0, 122 variables fixed on reduced cost
+Total time (CPU seconds):       0.07   (Wallclock seconds):       0.08
 

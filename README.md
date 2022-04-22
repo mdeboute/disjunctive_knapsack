@@ -3,7 +3,7 @@
 Model 1:
 
 ```text
-Usage: python3 model.py <input_file> <output_dir>
+Usage: python3 model.py <input_file>
 ```
 
 Benchmark (don't forget to `chmod u+x benchmark.sh`):

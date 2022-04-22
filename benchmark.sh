@@ -24,8 +24,6 @@ done
 
 cd $2
 grep Result $3/*.txt > $3/results.csv
-# for each line of the results.csv file remove all before ':'
-sed 's/^.*://' $3/results.csv > $3/results.csv
 
 echo "Experimental Campaign finished!"
 exit 0

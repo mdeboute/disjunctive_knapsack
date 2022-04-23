@@ -1,5 +1,6 @@
 from structures import *
 
+
 # because Python 3.7 doesn't have the remove_suffix method for strings
 def remove_suffix(input_string, suffix):
     if suffix and input_string.endswith(suffix):

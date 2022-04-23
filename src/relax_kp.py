@@ -24,7 +24,6 @@ def relax_kp(graph, c, u):
 
     return x
 
-
 def find_u(graph, c, u2, u1=0, epsilon=1e-3):
     n = graph.get_n()
     vertex = graph.get_vertices_info()

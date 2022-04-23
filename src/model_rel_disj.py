@@ -19,7 +19,6 @@ model = Model(name='disjunctive_knapsack_relax', solver_name="CBC")
 
 x = [model.add_var(name="x_%s" % i, var_type=BINARY) for i in range(n)]
 
-
 disj_expression = 0
 for i in range(n):
     for j in range(n):

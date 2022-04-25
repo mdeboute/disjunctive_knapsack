@@ -22,14 +22,21 @@ def relax_kp(graph, c, u):
 
     model.optimize(max_seconds=2)
 
-    return x
+    return x, model
 
 def find_u(graph, c, u2, u1=0, epsilon=1e-3):
+    """
+    It's a dichotomic to find the best upsilon coefficient
+    to solve the Lagrangian dual problem of the Disjunctive relax KP MILP.
+    """
+
     n = graph.get_n()
     vertex = graph.get_vertices_info()
     upsilon = (u1 + u2)/2
     upsilon_list = [upsilon]
-    x = relax_kp(graph, c, upsilon)
+    x, model = relax_kp(graph, c, upsilon)
+    if model.status == OptimizationStatus.OPTIMAL:
+        return upsilon
     switch = True
     while switch == True:
         cx = xsum(vertex[i].get_weight()*x[i] for i in range(n)).x
@@ -41,8 +48,10 @@ def find_u(graph, c, u2, u1=0, epsilon=1e-3):
             u2 = b
         upsilon = (u1 + u2)/2
         upsilon_list.append(upsilon)
-        x = relax_kp(graph, c, upsilon)
+        x, model = relax_kp(graph, c, upsilon)
         # if upsilon does not change anymore then stop (abs(cx-c) < epsilon is too strict)
+        if model.status == OptimizationStatus.OPTIMAL:
+            switch = False
         if abs(upsilon - upsilon_list[-2]) < epsilon:
             switch = False
         print(upsilon)
@@ -74,4 +83,4 @@ if __name__ == "__main__":
         print("Result: %s" % u)
         print("Time: %s" % (end - start))
     else:
-        print("No coef found!")
+        print("No coeff found!")

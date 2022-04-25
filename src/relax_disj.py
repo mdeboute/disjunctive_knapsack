@@ -7,7 +7,7 @@ def relax_disj(graph, c, v):
     n = graph.get_n()
     vertex = graph.get_vertices_info()
 
-    model = Model(name='relax_kp', solver_name="CBC")
+    model = Model(name='relax_disj', solver_name="CBC")
     model.verbose = 0
 
     x = [model.add_var(name="x_%s" % i, var_type=BINARY) for i in range(n)]
@@ -22,56 +22,67 @@ def relax_disj(graph, c, v):
 
     model.add_constr(xsum(vertex[i].get_weight()*x[i] for i in range(n)) <= c)
 
-
     model.optimize(max_seconds=2)
 
-    return x
+    return x, model
 
-
-def find_u(graph, c, u2, u1=0, epsilon=1e-3):
+def calc_disj_expression(graph, v, x):
     n = graph.get_n()
-    vertex = graph.get_vertices_info()
-    upsilon = (u1 + u2)/2
-    upsilon_list = [upsilon]
-    x = relax_kp(graph, c, upsilon)
+    disj_expression = 0
+    for i in range(n):
+        for j in range(n):
+            if i != j and graph.get_adj_matrix()[i][j] == 1:
+                disj_expression += v[i][j]*(1-x[i]-x[j])
+    return disj_expression
+
+def find_v(graph, c, v, alpha=1, epsilon=1e-3):
+    """
+    It's a subgradient algorithm to find the best phi coefficient
+    to solve the Lagrangian dual problem of the Disjunctive relax KP MILP.
+    """
+
+    x, model = relax_disj(graph, c, v)
+    thetas = [model.objective_value]
+
+    if model.status == OptimizationStatus.OPTIMAL:
+        return v
+
+    phi = v
+
     switch = True
     while switch == True:
-        cx = xsum(vertex[i].get_weight()*x[i] for i in range(n)).x
-        a = upsilon - epsilon
-        b = upsilon + epsilon
-        if cx > c:
-            u1 = a
-        elif cx < c:
-            u2 = b
-        upsilon = (u1 + u2)/2
-        upsilon_list.append(upsilon)
-        x = relax_kp(graph, c, upsilon)
-        # if upsilon does not change anymore then stop (abs(cx-c) < epsilon is too strict)
-        if abs(upsilon - upsilon_list[-2]) < epsilon:
+        lb = thetas[-1]
+        disj_expression = calc_disj_expression(graph, v, x)
+        s = alpha*(lb-thetas[-1])/(abs(disj_expression)**2)
+        phi = phi + s*disj_expression
+        x, model = relax_disj(graph, c, v=phi)
+        thetas.append(model.objective_value)
+        if model.status == OptimizationStatus.OPTIMAL:
             switch = False
-        print(upsilon)
+        if abs(thetas[-1] - thetas[-2]) < epsilon:
+            switch = False
+        print(phi)
 
-    return upsilon
+    return phi
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: relax_kp.py <fileName> <u>")
-        print("Where u is the upper bound of the u variable.")
+    if len(sys.argv) != 2:
+        print("Usage: relax_kp.py <fileName>")
         exit(1)
 
     fileName = sys.argv[1]
-    u2 = float(sys.argv[2])
 
     graph, c = parser(fileName)
+    n = graph.get_n()
+    v = [[0 for i in range(n)] for j in range(n)]
 
     start = time.time()
-    u = find_u(graph, c, u2)
+    v = find_v(graph, c, v)
     end = time.time()
 
-    if u is not None:
-        print("Result: %s" % u)
+    if v is not None:
+        print("Result: %s" % v)
         print("Time: %s" % (end - start))
     else:
-        print("No coef found!")
-
+        print("No coeff found!")

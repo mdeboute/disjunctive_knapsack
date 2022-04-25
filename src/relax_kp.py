@@ -69,4 +69,4 @@ if __name__ == "__main__":
         print("Result: %s" % u)
         print("Time: %s" % (end - start))
     else:
-        print("No coeff found!")
+        print("No coef found!")

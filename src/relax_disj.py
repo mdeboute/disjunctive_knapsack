@@ -14,7 +14,7 @@ n = graph.get_n()
 vertex = graph.get_vertices_info()
 v = [[0 for j in range(n)] for i in range(n)]
 
-model = Model(name='disjunctive_knapsack_relax', solver_name="CBC")
+model = Model(name='relax_disj', solver_name="CBC")
 # model.verbose = 0
 
 x = [model.add_var(name="x_%s" % i, var_type=BINARY) for i in range(n)]
@@ -25,7 +25,7 @@ for i in range(n):
         if i != j and graph.get_adj_matrix()[i][j] == 1:
             disj_expression += v[i][j]*(1-x[i]-x[j])
 
-model.objective = maximize( xsum(vertex[i].get_profit()*x[i] for i in range(n)) + disj_expression )
+model.objective = maximize(xsum(vertex[i].get_profit()*x[i] for i in range(n)) + disj_expression)
 
 model.add_constr(xsum(vertex[i].get_weight()*x[i] for i in range(n)) <= c)
 

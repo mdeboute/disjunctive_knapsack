@@ -51,9 +51,10 @@ def find_u(graph, c, u2, u1=0, epsilon=1e-3):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: relax_kp.py <fileName> <u>")
-        print("Where u is the upper bound of the u variable.")
+    if len(sys.argv) > 4 or len(sys.argv) < 3:
+        print("Usage: python3 src/relax_kp.py <fileName> <u> <e>")
+        print("Where u is the upper bound of the upsilon variable.")
+        print("Where e is the epsilon value. The precision of the upsilon.")
         exit(1)
 
     fileName = sys.argv[1]
@@ -62,7 +63,11 @@ if __name__ == "__main__":
     graph, c = parser(fileName)
 
     start = time.time()
-    u = find_u(graph, c, u2)
+    if len(sys.argv) == 4:
+        e = float(sys.argv[3])
+        u = find_u(graph, c, u2, epsilon=e)
+    else:
+        u = find_u(graph, c, u2)
     end = time.time()
 
     if u is not None:

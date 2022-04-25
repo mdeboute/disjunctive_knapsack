@@ -3,54 +3,75 @@ from mip import *
 import sys, time
 
 
-if len(sys.argv) != 2:
-    print("Bad number of arguments!")
-    print("Usage: python3 model.py <input_file>")
-    sys.exit()
+def relax_disj(graph, c, v):
+    n = graph.get_n()
+    vertex = graph.get_vertices_info()
 
-data_file = sys.argv[1]
-graph, c = parser(data_file)
-n = graph.get_n()
-vertex = graph.get_vertices_info()
-v = [[0 for j in range(n)] for i in range(n)]
+    model = Model(name='relax_kp', solver_name="CBC")
+    model.verbose = 0
 
-model = Model(name='relax_disj', solver_name="CBC")
-# model.verbose = 0
+    x = [model.add_var(name="x_%s" % i, var_type=BINARY) for i in range(n)]
 
-x = [model.add_var(name="x_%s" % i, var_type=BINARY) for i in range(n)]
+    disj_expression = 0
+    for i in range(n):
+        for j in range(n):
+            if i != j and graph.get_adj_matrix()[i][j] == 1:
+                disj_expression += v[i][j]*(1-x[i]-x[j])
 
-disj_expression = 0
-for i in range(n):
-    for j in range(n):
-        if i != j and graph.get_adj_matrix()[i][j] == 1:
-            disj_expression += v[i][j]*(1-x[i]-x[j])
+    model.objective = maximize(xsum(vertex[i].get_profit()*x[i] for i in range(n)) + disj_expression)
 
-model.objective = maximize(xsum(vertex[i].get_profit()*x[i] for i in range(n)) + disj_expression)
+    model.add_constr(xsum(vertex[i].get_weight()*x[i] for i in range(n)) <= c)
 
-model.add_constr(xsum(vertex[i].get_weight()*x[i] for i in range(n)) <= c)
 
-start = time.perf_counter()
-status = model.optimize(max_seconds=30)
-runtime = time.perf_counter() - start
+    model.optimize(max_seconds=2)
 
-if data_file.__contains__("/"):
-    data_file = data_file.split("/")[-1]
+    return x
 
-if status == OptimizationStatus.OPTIMAL:
-    print("Resolution status: OPTIMAL")
-elif status == OptimizationStatus.FEASIBLE:
-    print("Resolution status: TIMED OUT and CALCULATED FEASIBLE SOLUTION")
-elif status == OptimizationStatus.NO_SOLUTION_FOUND:
-    print("Resolution status: TIMED OUT and NO SOLUTION FOUND")
-elif status == OptimizationStatus.INFEASIBLE or status == OptimizationStatus.INT_INFEASIBLE:
-    print("Resolution status: INFEASIBLE")
-elif status == OptimizationStatus.UNBOUNDED:
-    print("Resolution status: UNBOUNDED")
 
-print("\nResolution time (sec) : " + str(round(runtime, 3))+"\n")
-print("----------------------------------\n")
+def find_u(graph, c, u2, u1=0, epsilon=1e-3):
+    n = graph.get_n()
+    vertex = graph.get_vertices_info()
+    upsilon = (u1 + u2)/2
+    upsilon_list = [upsilon]
+    x = relax_kp(graph, c, upsilon)
+    switch = True
+    while switch == True:
+        cx = xsum(vertex[i].get_weight()*x[i] for i in range(n)).x
+        a = upsilon - epsilon
+        b = upsilon + epsilon
+        if cx > c:
+            u1 = a
+        elif cx < c:
+            u2 = b
+        upsilon = (u1 + u2)/2
+        upsilon_list.append(upsilon)
+        x = relax_kp(graph, c, upsilon)
+        # if upsilon does not change anymore then stop (abs(cx-c) < epsilon is too strict)
+        if abs(upsilon - upsilon_list[-2]) < epsilon:
+            switch = False
+        print(upsilon)
 
-if model.num_solutions > 0:
-    print("Result; " + data_file + "; " + str(round(runtime, 3)) + "; " + str(status) + "; " + str(model.objective_value) +"\n")
-else:
-    print("Result; " + data_file + "; " + str(round(runtime, 3)) + "; " + str(status) + "; No solution returned!\n")
+    return upsilon
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("Usage: relax_kp.py <fileName> <u>")
+        print("Where u is the upper bound of the u variable.")
+        exit(1)
+
+    fileName = sys.argv[1]
+    u2 = float(sys.argv[2])
+
+    graph, c = parser(fileName)
+
+    start = time.time()
+    u = find_u(graph, c, u2)
+    end = time.time()
+
+    if u is not None:
+        print("Result: %s" % u)
+        print("Time: %s" % (end - start))
+    else:
+        print("No coef found!")
+

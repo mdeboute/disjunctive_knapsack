@@ -9,27 +9,31 @@ def calc_disj_expression(graph, v, x):
     for i in range(n):
         for j in range(n):
             if i != j and graph.get_adj_matrix()[i][j] == 1:
-                disj_expression += v[i][j]*(x[i] + x[j] - 1)
+                disj_expression += v[i][j] * (x[i] + x[j] - 1)
     return disj_expression
+
 
 def relax_disj(graph, c, v):
     n = graph.get_n()
     vertex = graph.get_vertices_info()
 
-    model = Model(name='relax_disj', solver_name="CBC")
+    model = Model(name="relax_disj", solver_name="CBC")
     model.verbose = 0
 
     x = [model.add_var(name="x_%s" % i, var_type=BINARY) for i in range(n)]
 
     disj_expression = calc_disj_expression(graph, v, x)
 
-    model.objective = minimize(xsum(-vertex[i].get_profit()*x[i] for i in range(n)) + disj_expression)
+    model.objective = minimize(
+        xsum(-vertex[i].get_profit() * x[i] for i in range(n)) + disj_expression
+    )
 
-    model.add_constr(xsum(vertex[i].get_weight()*x[i] for i in range(n)) <= c)
+    model.add_constr(xsum(vertex[i].get_weight() * x[i] for i in range(n)) <= c)
 
     model.optimize(max_seconds=2)
 
     return x, model
+
 
 def find_v(graph, c, v, alpha=1, epsilon=1e-3):
     """
@@ -49,8 +53,8 @@ def find_v(graph, c, v, alpha=1, epsilon=1e-3):
     while switch == True:
         ub = thetas[-1]
         disj_expression = calc_disj_expression(graph, v, x)
-        s = alpha*(ub-thetas[-1])/(abs(disj_expression)**2)
-        phi = phi + s*disj_expression
+        s = alpha * (ub - thetas[-1]) / (abs(disj_expression) ** 2)
+        phi = phi + s * disj_expression
         x, model = relax_disj(graph, c, v=phi)
         thetas.append(model.objective_value)
         if model.status == OptimizationStatus.OPTIMAL:

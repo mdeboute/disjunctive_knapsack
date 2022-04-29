@@ -4,8 +4,9 @@ from structures import *
 # because Python 3.7 doesn't have the remove_suffix method for strings
 def remove_suffix(input_string, suffix):
     if suffix and input_string.endswith(suffix):
-        return input_string[:-len(suffix)]
+        return input_string[: -len(suffix)]
     return input_string
+
 
 def parser(filePath):
     # Exemple of .dat file:
@@ -34,7 +35,7 @@ def parser(filePath):
     c = int(remove_suffix(lines[1].split(" ")[3], ";\n"))
 
     vertices_info = list()
-    for line in lines[3:n+3]:
+    for line in lines[3 : n + 3]:
         # remove \t and extra spaces
         line = line.replace("\t", " ").strip()
         # split by space and remove empty strings
@@ -42,7 +43,7 @@ def parser(filePath):
         vertices_info.append(Vertex(int(line[0]), int(line[1]), int(line[2])))
 
     adjacency_matrix = [[0 for _ in range(n)] for _ in range(n)]
-    for line in lines[n+6:-1]:
+    for line in lines[n + 6 : -1]:
         # remove \t and extra spaces
         line = line.replace("\t", " ").strip()
         # split by space and remove empty strings

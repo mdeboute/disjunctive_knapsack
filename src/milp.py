@@ -13,14 +13,14 @@ graph, c = parser(data_file)
 n = graph.get_n()
 vertex = graph.get_vertices_info()
 
-model = Model(name='disjunctive_knapsack', solver_name="CBC")
+model = Model(name="disjunctive_knapsack", solver_name="CBC")
 # model.verbose = 0
 
 x = [model.add_var(name="x_%s" % i, var_type=BINARY) for i in range(n)]
 
-model.objective = maximize(xsum(vertex[i].get_profit()*x[i] for i in range(n)))
+model.objective = maximize(xsum(vertex[i].get_profit() * x[i] for i in range(n)))
 
-model.add_constr(xsum(vertex[i].get_weight()*x[i] for i in range(n)) <= c)
+model.add_constr(xsum(vertex[i].get_weight() * x[i] for i in range(n)) <= c)
 
 for i in range(n):
     for j in range(n):
@@ -41,15 +41,36 @@ elif status == OptimizationStatus.FEASIBLE:
     print("Resolution status: TIMED OUT and CALCULATED FEASIBLE SOLUTION")
 elif status == OptimizationStatus.NO_SOLUTION_FOUND:
     print("Resolution status: TIMED OUT and NO SOLUTION FOUND")
-elif status == OptimizationStatus.INFEASIBLE or status == OptimizationStatus.INT_INFEASIBLE:
+elif (
+    status == OptimizationStatus.INFEASIBLE
+    or status == OptimizationStatus.INT_INFEASIBLE
+):
     print("Resolution status: INFEASIBLE")
 elif status == OptimizationStatus.UNBOUNDED:
     print("Resolution status: UNBOUNDED")
 
-print("\nResolution time (sec) : " + str(round(runtime, 3))+"\n")
+print("\nResolution time (sec) : " + str(round(runtime, 3)) + "\n")
 print("----------------------------------\n")
 
 if model.num_solutions > 0:
-    print("Result; " + data_file + "; " + str(round(runtime, 3)) + "; " + str(status) + "; " + str(model.objective_value) +"\n")
+    print(
+        "Result; "
+        + data_file
+        + "; "
+        + str(round(runtime, 3))
+        + "; "
+        + str(status)
+        + "; "
+        + str(model.objective_value)
+        + "\n"
+    )
 else:
-    print("Result; " + data_file + "; " + str(round(runtime, 3)) + "; " + str(status) + "; No solution returned!\n")
+    print(
+        "Result; "
+        + data_file
+        + "; "
+        + str(round(runtime, 3))
+        + "; "
+        + str(status)
+        + "; No solution returned!\n"
+    )

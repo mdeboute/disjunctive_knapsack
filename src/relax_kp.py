@@ -7,12 +7,15 @@ def relax_kp(graph, c, u):
     n = graph.get_n()
     vertex = graph.get_vertices_info()
 
-    model = Model(name='relax_kp', solver_name="CBC")
+    model = Model(name="relax_kp", solver_name="CBC")
     model.verbose = 0
 
     x = [model.add_var(name="x_%s" % i, var_type=BINARY) for i in range(n)]
 
-    model.objective = maximize(xsum(vertex[i].get_profit()*x[i] for i in range(n)) + u*(c - xsum(vertex[i].get_weight()*x[i] for i in range(n))))
+    model.objective = maximize(
+        xsum(vertex[i].get_profit() * x[i] for i in range(n))
+        + u * (c - xsum(vertex[i].get_weight() * x[i] for i in range(n)))
+    )
 
     for i in range(n):
         for j in range(n):
@@ -24,6 +27,7 @@ def relax_kp(graph, c, u):
 
     return x, model
 
+
 def find_u(graph, c, u2, u1=0, epsilon=1e-3):
     """
     It's a dichotomic to find the best upsilon coefficient
@@ -32,21 +36,21 @@ def find_u(graph, c, u2, u1=0, epsilon=1e-3):
 
     n = graph.get_n()
     vertex = graph.get_vertices_info()
-    upsilon = (u1 + u2)/2
+    upsilon = (u1 + u2) / 2
     upsilon_list = [upsilon]
     x, model = relax_kp(graph, c, upsilon)
     if model.status == OptimizationStatus.OPTIMAL:
         return upsilon
     switch = True
     while switch == True:
-        cx = xsum(vertex[i].get_weight()*x[i] for i in range(n)).x
+        cx = xsum(vertex[i].get_weight() * x[i] for i in range(n)).x
         a = upsilon - epsilon
         b = upsilon + epsilon
         if cx > c:
             u1 = a
         elif cx < c:
             u2 = b
-        upsilon = (u1 + u2)/2
+        upsilon = (u1 + u2) / 2
         upsilon_list.append(upsilon)
         x, model = relax_kp(graph, c, upsilon)
         # if upsilon does not change anymore then stop (abs(cx-c) < epsilon is too strict)

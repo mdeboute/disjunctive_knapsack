@@ -22,8 +22,8 @@ def relax_kp(graph, c, u):
             if i != j:
                 if graph.get_adj_matrix()[i][j] == 1:
                     model.add_constr(x[i] + x[j] <= 1)
-                    
-    #model.optimize(max_seconds=2)
+
+    # model.optimize(max_seconds=2)
     model.optimize()
 
     return x, model
@@ -46,14 +46,14 @@ def find_u(graph, c, epsilon=1e-3):
     while model.status == OptimizationStatus.OPTIMAL:
         print(u_max)
         constr = c - xsum(vertex[i].get_weight() * x[i] for i in range(n)).x
-        if constr==0:
+        if constr == 0:
             return u_max
         elif constr < 0:
             u_prec = u_max
             u_max = u_max * 2
             x, model = relax_kp(graph, c, u_max)
         else:
-            break;
+            break
     u1 = u_prec
     u2 = u_max
 
@@ -67,18 +67,18 @@ def find_u(graph, c, epsilon=1e-3):
         print("u =", upsilon, ", cx =", cx)
         # if upsilon does not change anymore then stop (abs(cx-c) < epsilon is too strict
         if abs(upsilon - upsilon_list[-2]) <= epsilon and cx <= c:
-            break;
+            break
         a = upsilon - epsilon
         b = upsilon + epsilon
-        #a = upsilon
-        #b = upsilon
+        # a = upsilon
+        # b = upsilon
         if cx > c:
             u1 = a
         elif cx < c:
             u2 = b
-        else: # cx==c (contrainte respectée et solution optimale pour les deux problèmes)
+        else:  # cx==c (contrainte respectée et solution optimale pour les deux problèmes)
             print("constraint satisfied!")
-            break;
+            break
         upsilon = (u1 + u2) / 2
         upsilon_list.append(upsilon)
         x, model = relax_kp(graph, c, upsilon)
@@ -89,7 +89,7 @@ def find_u(graph, c, epsilon=1e-3):
 if __name__ == "__main__":
     if len(sys.argv) > 3 or len(sys.argv) < 2:
         print("Usage: python3 src/relax_kp.py <fileName> <e>")
-        #print("Where u is the upper bound of the upsilon variable.")
+        # print("Where u is the upper bound of the upsilon variable.")
         print("Where e (optional) is the epsilon value. The precision of the upsilon.")
         exit(1)
 

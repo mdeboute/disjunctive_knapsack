@@ -47,3 +47,19 @@ if __name__ == "__main__":
     print(
         f"Relaxed MILP solution cost: {-model.objective_value}, in {time.time() - start} seconds"
     )  # minus because of minimization
+
+    # create the solution (what items to take)
+    solution = []
+    capacity = c
+    for item in range(n, 0, -1):
+        if matrix[item][capacity] != matrix[item - 1][capacity]:
+            solution.append(item)
+            capacity -= weights[item - 1]
+    solution.sort()
+    print(f"\nSolution: {solution}")
+
+    s = []
+    for i in range(n):
+        if x[i].x == 1:
+            s.append(i + 1)
+    print(f"\nSame solution as relaxed MILP: {s == solution}")

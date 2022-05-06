@@ -23,7 +23,7 @@ def relax_kp(graph, c, u):
                 if graph.get_adj_matrix()[i][j] == 1:
                     model.add_constr(x[i] + x[j] <= 1)
 
-    # model.optimize(max_seconds=2)
+    # model.optimize(max_seconds=10)
     model.optimize()
 
     return x, model
@@ -76,7 +76,7 @@ def find_u(graph, c, epsilon=1e-3):
             u1 = a
         elif cx < c:
             u2 = b
-        else:  # cx==c (contrainte respectée et solution optimale pour les deux problèmes)
+        else:  # cx==c (constraint respected and optimal solution for the two problems)
             print("constraint satisfied!")
             break
         upsilon = (u1 + u2) / 2
@@ -89,7 +89,6 @@ def find_u(graph, c, epsilon=1e-3):
 if __name__ == "__main__":
     if len(sys.argv) > 3 or len(sys.argv) < 2:
         print("Usage: python3 src/relax_kp.py <fileName> <e>")
-        # print("Where u is the upper bound of the upsilon variable.")
         print("Where e (optional) is the epsilon value. The precision of the upsilon.")
         exit(1)
 

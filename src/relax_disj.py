@@ -87,8 +87,8 @@ def find_v(graph, c, alpha=1, epsilon=1e-2):
     n = graph.get_n()
     ub = upper_bound(graph, c)
 
-    v = [[0 for j in range(n)] for i in range(n)]
-    v_prec = [[-1 for j in range(n)] for i in range(n)]
+    v = [[0 for _ in range(n)] for _ in range(n)]
+    v_prec = [[-1 for _ in range(n)] for _ in range(n)]
 
     x, model = relax_disj(graph, c, v)
     subGradient = [sub_gradient(graph, x)]
@@ -119,6 +119,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 3 or len(sys.argv) < 2:
         print("Usage: python3 src/relax_disj.py <fileName> <e>")
         print("Where e (optional) is the epsilon value. The precision of the upsilon.")
+        print("The default value is 1e-2.")
         exit(1)
 
     fileName = sys.argv[1]
@@ -145,6 +146,14 @@ if __name__ == "__main__":
             for i in range(n):
                 for j in range(n):
                     if i != j and graph.get_adj_matrix()[i][j] == 1:
-                        if x[i].x+x[j].x > 1:
-                            print("Constraint: x_"+str(i)+" + x_"+str(j)+" = "+str(x[i].x+x[j].x)+" > 1 (Not feasible)")
+                        if x[i].x + x[j].x > 1:
+                            print(
+                                "Constraint: x_"
+                                + str(i)
+                                + " + x_"
+                                + str(j)
+                                + " = "
+                                + str(x[i].x + x[j].x)
+                                + " > 1 (Not feasible)"
+                            )
             print("Original model objective value:", profit)

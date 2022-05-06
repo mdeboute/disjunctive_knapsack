@@ -90,6 +90,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 3 or len(sys.argv) < 2:
         print("Usage: python3 src/relax_kp.py <fileName> <e>")
         print("Where e (optional) is the epsilon value. The precision of the upsilon.")
+        print("If e is not specified, the precision is set to 1e-3.")
         exit(1)
 
     fileName = sys.argv[1]

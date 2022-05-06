@@ -107,17 +107,6 @@ def find_v(graph, c, alpha=1, epsilon=1e-2):
                         v_prec[i][j] = v[i][j]
                         v[i][j] = max(0, v[i][j] + s * (x[i].x + x[j].x - 1))
                         if abs(v_prec[i][j] - v[i][j]) > epsilon:
-                            print(
-                                "s: ",
-                                s,
-                                "   ",
-                                "Ax - b: ",
-                                (x[i].x + x[j].x - 1),
-                                "   ",
-                                "v_prec/v: ",
-                                v_prec[i][j],
-                                v[i][j],
-                            )
                             has_improved = True
         x, model = relax_disj(graph, c, v)
         subGradient.append(sub_gradient(graph, x))
@@ -127,8 +116,9 @@ def find_v(graph, c, alpha=1, epsilon=1e-2):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: relax_disj.py <fileName>")
+    if len(sys.argv) > 3 or len(sys.argv) < 2:
+        print("Usage: python3 src/relax_disj.py <fileName> <e>")
+        print("Where e (optional) is the epsilon value. The precision of the upsilon.")
         exit(1)
 
     fileName = sys.argv[1]
@@ -136,7 +126,11 @@ if __name__ == "__main__":
     n = graph.get_n()
 
     start = time.time()
-    v = find_v(graph, c)
+    if len(sys.argv) == 3:
+        e = float(sys.argv[2])
+        v = find_v(graph, c, epsilon=e)
+    else:
+        v = find_v(graph, c)
     end = time.time()
 
     if v is not None:
@@ -148,4 +142,9 @@ if __name__ == "__main__":
             profit = xsum(vertex[i].get_profit() * x[i] for i in range(n)).x
             weight = xsum(vertex[i].get_weight() * x[i] for i in range(n)).x
             print("Constraint: Total weight =", weight, ", Capacity =", c)
+            for i in range(n):
+                for j in range(n):
+                    if i != j and graph.get_adj_matrix()[i][j] == 1:
+                        if x[i].x+x[j].x > 1:
+                            print("Constraint: x_"+str(i)+" + x_"+str(j)+" = "+str(x[i].x+x[j].x)+" > 1 (Not feasible)")
             print("Original model objective value:", profit)

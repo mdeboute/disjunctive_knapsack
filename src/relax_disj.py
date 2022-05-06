@@ -30,7 +30,8 @@ def relax_disj(graph, c, v):
 
     model.add_constr(xsum(vertex[i].get_weight() * x[i] for i in range(n)) <= c)
 
-    model.optimize(max_seconds=2)
+    #model.optimize(max_seconds=2)
+    model.optimize()
 
     return x, model
 
@@ -67,7 +68,7 @@ def upper_bound(graph, c):
             cx += vertex[i].get_weight()
 
             for j in range(n):
-                if i != j and graph.get_adj_matrix()[i][j] == 1:
+                if i != j and graph.get_adj_matrix()[i][j] == 1 and j in I:
                     I.remove(j)
         I.pop()
     return ub
@@ -79,11 +80,11 @@ def sub_gradient(graph, x):
     for i in range(n):
         for j in range(n):
             if i != j and graph.get_adj_matrix()[i][j] == 1:
-                s.append(abs(x[i].x + x[j].x - 1))
+                s.append((x[i].x + x[j].x - 1)**2)
     return sum(s)
 
 
-def find_v(graph, c, alpha=1, epsilon=1e-3):
+def find_v(graph, c, alpha=1e-2, epsilon=1e-2):
     """
     It's a subgradient algorithm to find the best v coefficient
     to solve the Lagrangian dual problem of the Disjunctive relax KP MILP.
@@ -92,7 +93,7 @@ def find_v(graph, c, alpha=1, epsilon=1e-3):
     ub = upper_bound(graph, c)
 
     v = [[0 for j in range(n)] for i in range(n)]
-    v_prec = [[0 for j in range(n)] for i in range(n)]
+    v_prec = [[-1 for j in range(n)] for i in range(n)]
 
     x, model = relax_disj(graph, c, v)
     subGradient = [sub_gradient(graph, x)]
@@ -100,16 +101,31 @@ def find_v(graph, c, alpha=1, epsilon=1e-3):
         return v
     has_improved = True
     while has_improved:
-        s = alpha * (ub - model.objective_value) / (subGradient[-1] ** 2)
+        s = alpha * (ub - model.objective_value) / subGradient[-1]
         has_improved = False
         for i in range(n):
             for j in range(n):
                 if i != j and graph.get_adj_matrix()[i][j] == 1:
-                    v_prec[i][j] = v[i][j]
-                    v[i][j] = v[i][j] + s * (x[i].x + x[j].x - 1)
+                    #s = 0
+                    #if ((x[i].x + x[j].x - 1)!=0):
+                    #    s = alpha * (ub - model.objective_value) / ((x[i].x + x[j].x - 1) ** 2)
+
                     if abs(v_prec[i][j] - v[i][j]) > epsilon:
-                        has_improved = True
+                        
+                        #print(v_prec[i][j] , v[i][j], end="   ")
+                        v_prec[i][j] = v[i][j]
+                        v[i][j] = max(0, v[i][j] + s * (x[i].x + x[j].x - 1))
+                        if abs(v_prec[i][j] - v[i][j]) > epsilon:
+                            print(s, "   ", (x[i].x + x[j].x - 1), "   " , v_prec[i][j] , v[i][j])
+                            has_improved = True
+
         x, model = relax_disj(graph, c, v)
+        if (model.status == OptimizationStatus.INFEASIBLE):
+            for i in range(n):
+                for j in range(n):
+                    if i != j and graph.get_adj_matrix()[i][j] == 1:
+                        if v[i][j]!=0:
+                            print(v[i][j])
         subGradient.append(sub_gradient(graph, x))
         if subGradient[-1] == 0:
             break
